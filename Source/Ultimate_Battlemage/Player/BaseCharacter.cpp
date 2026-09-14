@@ -87,7 +87,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 	
 	for (int i = 0; i <= 100; i++)
 	{
-		if (MultiOfFive.Contains(i))
+		if (MultiOfFive.Contains(i))				
 		{
 			RegenMana(DeltaTime);
 		}
