@@ -289,6 +289,8 @@ void ABaseCharacter::UpdateHud(float Var, float MaxVar)
 #pragma region BaseCast
 void ABaseCharacter::CastPrimary()
 {
+	if (bIsCasting) return;
+
 	//ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
 	
 	
@@ -399,12 +401,16 @@ void ABaseCharacter::CastPrimary()
 	{
 		PC->UpdateHUDMana(Mana, MaxMana);
 	}
+
+	StartSpellLockout(6.f);
 }
 #pragma endregion
 
 #pragma region ProjectileSpell
 void ABaseCharacter::ProjCast()
 {
+	if (bIsCasting) return;
+
 	// Mana Check
 	if (Mana < 5.f)
 		return;
@@ -472,7 +478,7 @@ void ABaseCharacter::ProjCast()
 		{
 			//Spell->SetInstigator(this);
 			Spell->SetOwner(this);
-			Spell->TryCast(Context);
+			Spell->TryCast(Context); 
 			UE_LOG(LogTemp, Warning, TEXT("Spell Cast"));
 		}
 	}
@@ -482,12 +488,16 @@ void ABaseCharacter::ProjCast()
 	{
 		PC->UpdateHUDMana(Mana, MaxMana);
 	}
+
+	StartSpellLockout(.5f);
 }
 #pragma endregion
 
 #pragma region TraceSpell
 void ABaseCharacter::TraceCast()
 {
+	if (bIsCasting) return;
+
 	// Mana Check
 	if (Mana < 5.f)
 		return;
@@ -549,15 +559,17 @@ void ABaseCharacter::TraceCast()
 			UE_LOG(LogTemp, Warning, TEXT("Spell Cast"));
 		}
 	}
+
+	StartSpellLockout(1.5f);
 }
 #pragma endregion
-
 
 #pragma region AOESpell
 
 
 void ABaseCharacter::AOEStartCast()
 {
+	if (bIsCasting) return;
 	bIsTargeting = true;
 }
 
@@ -580,9 +592,17 @@ void ABaseCharacter::AOEUpdateCast()
 	start.Y += 50.f;
 	end = start + (forward * AOERange);*/
 
-	UE_LOG(LogTemp, Warning, TEXT("Start = %s | End = %s"),
-		*start.ToString(),
-		*end.ToString());
+
+	if (start != startDup || end != endDup)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Start = %s | End = %s"),
+			*start.ToString(),
+			*end.ToString());
+
+		startDup = start;
+		endDup = end;
+	}
+	
 
 	FHitResult hit;
 	FCollisionQueryParams Params;
@@ -642,6 +662,8 @@ void ABaseCharacter::AOEReleaseCast()
 
 		
 	}
+
+	StartSpellLockout(3.f);
 }
 
 void ABaseCharacter::IncreaseAOERange()
@@ -655,5 +677,19 @@ void ABaseCharacter::DecreaseAOERange()
 }
 #pragma endregion
 
+#pragma region SpellLockout
+void ABaseCharacter::StartSpellLockout(float Duration)
+{
+	bIsCasting = true;
 
+	// Start timer delay
+	GetWorldTimerManager().SetTimer(SpellDelay, this, &ABaseCharacter::ResetSpellCastLockout, Duration, false);
+}
+
+void ABaseCharacter::ResetSpellCastLockout()
+{
+	bIsCasting = false;
+	UE_LOG(LogTemp, Log, TEXT("Lockout lifted. Ready for the next spell!"));
+}
+#pragma endregion 
 

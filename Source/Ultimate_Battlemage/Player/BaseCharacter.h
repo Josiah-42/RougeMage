@@ -68,6 +68,19 @@ protected:
 	void UpdateHud(float Var, float MaxVar);
 
 	// --- Jump is handled by built in ACharacter Jump(), but can override if needed ---
+
+	// --- Spell Lock ---
+	bool bIsCasting = false;
+	FTimerHandle SpellDelay;
+
+	void StartSpellLockout(float Duration);
+	void ResetSpellCastLockout();
+
+private:
+
+	FVector startDup;
+	FVector endDup;
+
 public:
 
 	// ---Scripts---
@@ -241,4 +254,6 @@ public:
 
 	//// Called when using mana
 	//void UseMana(float amount);
+
+
 };
