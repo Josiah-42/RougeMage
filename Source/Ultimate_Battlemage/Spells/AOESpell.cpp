@@ -31,19 +31,26 @@ AAOESpell::AAOESpell()
 
 void AAOESpell::ExecuteCast(const FSpellCastContext& Context)
 {   
+	// --- Active when spell is casted ---
 	Caster = Context.Caster;
 
 	Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	AOESpellOn = true;
+	bIsCasted = true;
 
-	if (GEngine)
+	if (GEngine) 
 	{
 		GEngine->AddOnScreenDebugMessage(
 			-1,             // Unique key to prevent message flooding (-1 means add a new message)
-			5.0f,           // Duration in seconds to display the message
+			10.0f,           // Duration in seconds to display the message
 			FColor::Cyan,   // Text color
 			FString::Printf(TEXT("AOE SPELL MESH LOCATION: %s, AOE SPELL TARGETPOINT: %s"), *GetActorLocation().ToString(), *TargetPoint.ToString()));
+	}
+
+	if (bIsCasted)
+	{
+		SpellDestroyDelay(3.f);
 	}
 
 }
@@ -60,6 +67,7 @@ void AAOESpell::ExecuteCast(const FSpellCastContext& Context)
 void AAOESpell::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// --- Active when spell overlapped
 	UE_LOG(LogTemp, Warning, TEXT("AOE Overlap"));
 	AOESpellOn = false;
 	UE_LOG(LogTemp, Warning, TEXT("AOE HIT: OtherActor=%s"), *GetNameSafe(OtherActor));
@@ -68,4 +76,16 @@ void AAOESpell::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActo
 		OtherActor->Destroy();
 		Destroy();
 	}
+}
+
+void AAOESpell::SpellDestroyDelay(float Durations)
+{
+	// Start timer delay
+	GetWorldTimerManager().SetTimer(DestroyDelay, this, &AAOESpell::DestroySpell, Durations, false);
+}
+
+void AAOESpell::DestroySpell()
+{
+	bIsCasted = false;
+	Destroy();
 }

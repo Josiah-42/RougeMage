@@ -3,6 +3,8 @@
 
 #include "BaseAI.h"
 #include "BaseAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values
 ABaseAI::ABaseAI()
@@ -12,6 +14,13 @@ ABaseAI::ABaseAI()
 
 	AIControllerClass = ABaseAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+	}
+
+
 }
 
 

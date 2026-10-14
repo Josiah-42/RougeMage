@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void Tick(float DeltaTime) override;
 
 public:
 
@@ -38,6 +39,12 @@ public:
 	//AI Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI Variables")
 	bool CanSeePlayer;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI Variables")
+	AActor* TargetPlayer;
+
+	UPROPERTY(BlueprintReadOnly, Category = "AI Variables")
+	AActor* Me;
 
 	//Functions
 	void ChasePlayer(AActor* Target);

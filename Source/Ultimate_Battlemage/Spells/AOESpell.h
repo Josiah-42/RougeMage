@@ -33,6 +33,13 @@ public:
 	AActor* Caster;
 	FSpellCastContext Context2;
 
+private:
+
+	bool bIsCasted = false;
+	FTimerHandle DestroyDelay;
+
+	void SpellDestroyDelay(float Durations);
+	void DestroySpell();
 
 protected:
 
