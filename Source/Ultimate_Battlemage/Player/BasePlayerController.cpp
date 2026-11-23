@@ -32,7 +32,7 @@ void ABasePlayerController::BeginPlay()
     ABaseCharacter* CharacterMine = Cast<ABaseCharacter>(MyPawn);
     if (CharacterMine)
     {
-        UpdateHUDHealth(CharacterMine->Health, CharacterMine->MaxHealth);
+        UpdateHUDHealth(CharacterMine->CurrHealth, CharacterMine->MaxHealth);
         UpdateHUDMana(CharacterMine->Mana, CharacterMine->MaxMana);
         UpdateHUDStamina(CharacterMine->Stamina, CharacterMine->MaxStamina);
     }

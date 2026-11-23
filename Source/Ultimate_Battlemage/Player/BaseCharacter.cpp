@@ -44,12 +44,12 @@ ABaseCharacter::ABaseCharacter()
 	FollowCamera->SetRelativeLocationAndRotation(CameraOffsetLocation, CameraOffsetRotation);
 	FollowCamera->bUsePawnControlRotation = true;
 
-	//Force the player body model to rotate left/right (Yaw) with the camera
+	// Force the player body model to rotate left/right (Yaw) with the camera
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
-	//Stop the character body from snapping to face the direction they are walking
+	// Stop the character body from snapping to face the direction they are walking
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -58,10 +58,19 @@ ABaseCharacter::ABaseCharacter()
 	// --- Character movement defaults ---
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
-	GetCharacterMovement()->MaxWalkSpeed = CharacterStats.WalkSpeed	;//WalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = CharacterStats.WalkSpeed;
+	GetCharacterMovement()->JumpZVelocity = 1000.f;
+
+	// --- Between Jumps Speed ---
+	if (GetCharacterMovement()->IsJumpAllowed())
+	{
+		GetCharacterMovement()->SetJumpAllowed(true);
+	}
+
+
 
 	// --- Character stats defaults ---
-	Health = CharacterStats.Health;
+	CurrHealth = CharacterStats.Health;
 	MaxHealth = CharacterStats.MaxHealth;
 	Mana = CharacterStats.Mana;
 	MaxMana = CharacterStats.MaxMana;
@@ -644,6 +653,7 @@ void ABaseCharacter::AOEReleaseCast()
 		FActorSpawnParameters Params;
 		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+		//Spawn Spell AOE
 		Spell = GetWorld()->SpawnActor<ABaseSpell>(
 			AOESpellClass,
 			TargetPoint,

@@ -2,7 +2,7 @@
 
 
 #include "AOESpell.h"
-
+#include "../AI/BaseAI.h"
 AAOESpell::AAOESpell()
 {
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
@@ -73,9 +73,28 @@ void AAOESpell::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActo
 	UE_LOG(LogTemp, Warning, TEXT("AOE HIT: OtherActor=%s"), *GetNameSafe(OtherActor));
 	if (OtherActor && !OtherActor->IsA(AAOESpell::StaticClass()) && OtherActor != Caster)
 	{
-		OtherActor->Destroy();
+		ABaseAI* Enemy = Cast<ABaseAI>(OtherActor); // Replace with your actual AI class name
+
+		if (Enemy)
+		{
+			Enemy->CurrHealth -= 10.0f;
+
+			Enemy->UpdateHealthBarVisuals();
+
+			if (Enemy->CurrHealth <= 0.f)
+			{
+				OtherActor->Destroy();
+			}
+		}
+
 		Destroy();
 	}
+}
+
+FVector AAOESpell::CalculateSpawnOrigin(const FVector& DefaultOrigin, AActor* Target) const
+{
+	// Spawn AOE directly on target
+	return Target ? Target->GetActorLocation() : DefaultOrigin;
 }
 
 void AAOESpell::SpellDestroyDelay(float Durations)

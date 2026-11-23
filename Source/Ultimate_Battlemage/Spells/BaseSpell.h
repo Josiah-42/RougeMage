@@ -26,7 +26,7 @@ public:
 	float Damage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spell|Stats")
-	float ProjectilSpeed;
+	float ProjectileSpeed;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spell|Stats")
 	float Range;
@@ -50,5 +50,8 @@ public:
 
 	bool TryCast(const FSpellCastContext& Context);
 
+	// Virtual aiming hooks so each spell type calculates its own aim/origin
+	virtual FVector CalculateSpawnOrigin(const FVector& DefaultOrigin, AActor* Target) const;
+	virtual FRotator CalculateAimRotation(const FVector& SpawnOrigin, AActor* Target) const;
 
 };

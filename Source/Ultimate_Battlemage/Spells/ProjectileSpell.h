@@ -33,7 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Componenets")
 	USphereComponent* Collision;
 
+	//Functions
 
+	virtual FRotator CalculateAimRotation(const FVector& SpawnOrigin, AActor* Target) const override;
 
 protected:
 

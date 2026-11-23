@@ -2,6 +2,7 @@
 
 
 #include "TraceSpell.h"
+#include "../AI/BaseAI.h"
 
 ATraceSpell::ATraceSpell()
 {
@@ -67,10 +68,20 @@ void ATraceSpell::HandleTraceHit(const FHitResult& Hit)
 
 	UE_LOG(LogTemp, Warning, TEXT("Trace HIT: HitActor=%s"), *GetNameSafe(HitActor));
 
-	// Example: destroy hit actor (careful with player/world actors!)
-	HitActor->Destroy();
+	ABaseAI* Enemy = Cast<ABaseAI>(HitActor); // Replace with your actual AI class name
 
-	// Optional: destroy spell actor if it exists in world
+	if (Enemy)
+	{
+		Enemy->CurrHealth -= 10.0f;
+
+		Enemy->UpdateHealthBarVisuals();
+
+		if (Enemy->CurrHealth <= 0.f)
+		{
+			HitActor->Destroy();
+		}
+	}
+
 	Destroy();
 }
 
@@ -78,6 +89,18 @@ void ATraceSpell::OnHit(UPrimitiveComponent* HitComp, AActor* HitActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Trace HIT: HitActor=%s"), *GetNameSafe(HitActor));
+	ABaseAI* Enemy = Cast<ABaseAI>(HitActor); // Replace with your actual AI class name
+
+	if (Enemy)
+	{
+		Enemy->CurrHealth -= 10.0f;
+
+		Enemy->UpdateHealthBarVisuals();
+
+		if (Enemy->CurrHealth <= 0.f)
+		{
+			HitActor->Destroy();
+		}
+	}
 	Destroy();
-	HitActor->Destroy();
 }

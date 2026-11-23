@@ -64,8 +64,6 @@ protected:
 	void DrainStamina();
 	void RegenStamina();
 
-	// --- Helpers ---
-	void UpdateHud(float Var, float MaxVar);
 
 	// --- Jump is handled by built in ACharacter Jump(), but can override if needed ---
 
@@ -83,6 +81,9 @@ private:
 
 public:
 
+	// --- Helpers ---
+	void UpdateHud(float Var, float MaxVar);
+
 	// ---Scripts---
 	/*UPROPERTY(BlueprintReadOnly, Category = "Scripts")
 	ABasePlayerController* PC;*/
@@ -92,7 +93,7 @@ public:
 
 	// --- Stats (Base placeholders) ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float Health;
+	float CurrHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float MaxHealth;

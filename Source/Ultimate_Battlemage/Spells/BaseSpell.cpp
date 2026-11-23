@@ -2,6 +2,7 @@
 
 
 #include "BaseSpell.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ABaseSpell::ABaseSpell()
@@ -31,6 +32,19 @@ bool ABaseSpell::TryCast(const FSpellCastContext& Context)
 
 	ExecuteCast(Context);
 	return true;
+}
+
+FVector ABaseSpell::CalculateSpawnOrigin(const FVector& DefaultOrigin, AActor* Target) const
+{
+	// Default: Spawn front of AI eyes
+	return DefaultOrigin;
+}
+
+FRotator ABaseSpell::CalculateAimRotation(const FVector& SpawnOrigin, AActor* Target) const
+{
+	// Default: Aim straight at target (TraceSpell)
+	if (!Target) return FRotator::ZeroRotator;
+	return UKismetMathLibrary::FindLookAtRotation(SpawnOrigin, Target->GetActorLocation());
 }
 
 bool ABaseSpell::CanCast(const FSpellCastContext& Context)

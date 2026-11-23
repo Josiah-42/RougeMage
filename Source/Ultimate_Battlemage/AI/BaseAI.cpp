@@ -4,6 +4,9 @@
 #include "BaseAI.h"
 #include "BaseAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/ProgressBar.h"
 
 
 // Sets default values
@@ -17,9 +20,16 @@ ABaseAI::ABaseAI()
 
 	if (GetCharacterMovement())
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+		GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	}
 
+	// --- Ai stats defaults ---
+	CurrHealth = AIStats.Health;
+	MaxHealth = AIStats.MaxHealth;
+	Mana = AIStats.Mana;
+	MaxMana = AIStats.MaxMana;
+	Stamina = AIStats.Stamina;
+	MaxStamina = AIStats.MaxStamina;
 
 }
 
@@ -28,7 +38,31 @@ ABaseAI::ABaseAI()
 void ABaseAI::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UpdateHealthBarVisuals();
 	
+}
+
+void ABaseAI::UpdateHealthBarVisuals()
+{
+	//Widget Comp
+	UWidgetComponent* WidgetComp = FindComponentByClass<UWidgetComponent>();
+	if (!WidgetComp) return;
+
+	//Widget Object
+	UUserWidget* HPUserWidget = WidgetComp->GetUserWidgetObject();
+
+	//Progress Bar
+	UProgressBar* AIHPBar = Cast<UProgressBar>(HPUserWidget->GetWidgetFromName(TEXT("HealthBar")));
+
+	if (AIHPBar)
+	{
+		//HP
+		float HealthPercent = CurrHealth / MaxHealth;
+
+		//Set Progress bar fill
+		AIHPBar->SetPercent(HealthPercent);
+	}
 }
 
 
